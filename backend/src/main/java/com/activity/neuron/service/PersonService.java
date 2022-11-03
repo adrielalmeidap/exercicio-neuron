@@ -21,4 +21,12 @@ public class PersonService {
     public Person createPerson(Person person ){
         return personRepository.save(person);
     }
+
+    public void deletePerson(Long idPerson){
+        Optional<Person> optionalPerson = getPersonById(idPerson);
+
+        if(optionalPerson.isPresent()){
+            personRepository.deleteById(idPerson);
+        }
+    }
 }
