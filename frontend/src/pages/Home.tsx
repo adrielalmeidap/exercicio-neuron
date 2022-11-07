@@ -2,6 +2,7 @@ import { Component } from 'react';
 import IPersonData from '../types/person.type';
 import PersonDataService from '../services/person.service';
 import { Main } from '../components/main/main';
+import { Link } from 'react-router-dom';
 
 export interface IHomePageProps {}
 
@@ -53,7 +54,7 @@ export default class HomePage extends Component<IHomePageProps, IState> {
                                 <td>{people.birthDate.toString()}</td>
                                 <td>
                                     <button className="btn btn-outline-success"><i className="bi bi-eye"></i></button>
-                                    <button className="btn btn-outline-warning"><i className="bi bi-pencil"></i></button>
+                                    <Link to={`/person/${people.id}`} className="btn btn-outline-warning"><i className="bi bi-pencil"></i></Link>
                                     <button className="btn btn-outline-danger"><i className="bi bi-trash3-fill"></i></button>
                                 </td>
                             </tr>

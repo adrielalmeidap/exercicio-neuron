@@ -8,6 +8,9 @@ export const Menu: React.FC = () => {
                 <Link to="/">
                     <i className="fa fa-home"></i> Pagina inicial
                 </Link>
+								<Link to={"/person/add"}>
+									<i className="bi bi-globe"></i> Novo Cadastro
+								</Link>
             </nav>
         </aside>
     );
