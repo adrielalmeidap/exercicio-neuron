@@ -1,5 +1,6 @@
 package com.activity.neuron.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Entity
 public class Address {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String postalCode;
     private String district;
@@ -22,7 +23,7 @@ public class Address {
     private String state;
 
     @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private Person person;
 
     public Address() {
