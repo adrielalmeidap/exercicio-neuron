@@ -2,6 +2,7 @@ import { Component } from 'react';
 import IPersonData from '../types/person.type';
 import PersonDataService from '../services/person.service';
 import { Main } from '../components/main/main';
+import { Link } from 'react-router-dom';
 
 export interface IHomePageProps {}
 
@@ -42,6 +43,7 @@ export default class HomePage extends Component<IHomePageProps, IState> {
                             <th scope="col">Nome completo</th>
                             <th scope="col">CPF</th>
                             <th scope="col">Data de nascimento</th>
+                            <th scope="col">Qtd. de endereços</th>
                             <th scope="col">Actions</th>
                         </tr>
                     </thead>
@@ -51,8 +53,11 @@ export default class HomePage extends Component<IHomePageProps, IState> {
                                 <td>{people.fullName}</td>
                                 <td>{people.cpf}</td>
                                 <td>{people.birthDate.toString()}</td>
+                                <td>{people.addresses.length}</td>
                                 <td>
-                                    <button className="btn btn-outline-success"><i className="bi bi-eye"></i></button>
+                                    <Link to={"/view/id?" + people.id}>
+                                        <button className="btn btn-outline-success"><i className="bi bi-eye"></i></button>
+                                    </Link>
                                     <button className="btn btn-outline-warning"><i className="bi bi-pencil"></i></button>
                                     <button className="btn btn-outline-danger"><i className="bi bi-trash3-fill"></i></button>
                                 </td>
