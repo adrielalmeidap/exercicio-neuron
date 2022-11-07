@@ -9,6 +9,7 @@ import "./index.css";
 
 import { Logo } from './components/logo/logo';
 import { Menu } from './components/menu/menu';
+import ViewPage from './pages/View';
 
 class App extends Component {
 
@@ -19,6 +20,7 @@ class App extends Component {
         <Menu />
         <Routes>
           <Route path={"/"} element={<HomePage />} />
+          <Route path={"/view/:id"} element={<ViewPage/>} />
         </Routes>
       </div>
     );
