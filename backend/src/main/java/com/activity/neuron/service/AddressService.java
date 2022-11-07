@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.activity.neuron.model.Address;
 import com.activity.neuron.repository.AddressRepository;
-import com.activity.neuron.util.Methods;
 
 @Service
 public class AddressService {
