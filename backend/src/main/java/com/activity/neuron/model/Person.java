@@ -31,7 +31,7 @@ public class Person {
     private Date birthDate;
 
     @JsonManagedReference
-    @OneToMany(mappedBy="person", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Address> addresses = new ArrayList<>();
 
     public Person() {
