@@ -20,7 +20,7 @@ export default class ViewPage extends Component<IViewPageProps, IState>{
                 id: "",
                 fullName: "",
                 cpf: "",
-                birthDate: "",
+                birthDate: new Date(),
                 addresses: []
             }
         };
@@ -45,9 +45,9 @@ export default class ViewPage extends Component<IViewPageProps, IState>{
         });
     }
 
-    formatDate(date: string){
+    formatDate(date: Date){
         const newDate = new Date(date);
-        console.log(newDate.getMonth());
+
         let day: string = newDate.getDate() > 10 ? "" + (newDate.getDate() + 1) : "0" + (newDate.getDate() + 1);
         let month: string = newDate.getMonth() > 10 ? "" + (newDate.getMonth() + 1) : "0" + (newDate.getMonth() + 1);
         let year: number = newDate.getFullYear();
@@ -56,55 +56,44 @@ export default class ViewPage extends Component<IViewPageProps, IState>{
     }
 
     renderAddress(person: IPersonData){
-        let count: number = 0;
         return  this.state.person.addresses.map( address => {
-            count += 1;
             return (
                 <>
-                    <div className="box">
-                        <article className="securitytable">
-                            <div className="title">
-                                <h3>
-                                    <strong>Endereço: {count}</strong>
-                                </h3>
-                                <hr className="lightgray-line" />
+                    <div>
+                        <hr className="lightgray-line" />
+                        <div className="row">
+                            <div className="col-6">
+                                <label htmlFor="input1">Rua</label>
+                                <input className="form-control" id="input1" value={address.street} disabled/>	  
                             </div>
-                            <div>
-                                <div className="row">
-                                    <div className="col-6">
-                                        <label htmlFor="input1">Rua</label>
-                                        <input className="form-control" id="input1" value={address.street} disabled/>	  
-                                    </div>
 
-                                    <div className="col-4">
-                                        <label htmlFor="input1">Complemento</label>
-                                        <input className="form-control" id="input1" value={address.complement} disabled/>	  
-                                    </div>
-
-                                    <div className="col-2">
-                                        <label htmlFor="input1">CEP</label>
-                                        <input className="form-control" id="input1" value={address.postalCode} disabled/>	  
-                                    </div>
-                                </div>
-
-                                <div className="row">
-                                    <div className="col">
-                                        <label htmlFor="input1">Bairro</label>
-                                        <input className="form-control" id="input1" value={address.district} disabled/>	  
-                                    </div>
-
-                                    <div className="col">
-                                        <label htmlFor="input2">Cidade</label>
-                                        <input className="form-control" id="input2" value={address.city} disabled/>	
-                                    </div>
-                                    
-                                    <div className="col">
-                                        <label htmlFor="input3">Estado</label>
-                                        <input className="form-control" id="input3" value={address.state} disabled/>	  
-                                    </div>
-                                </div>
+                            <div className="col-4">
+                                <label htmlFor="input1">Complemento</label>
+                                <input className="form-control" id="input1" value={address.complement} disabled/>	  
                             </div>
-                        </article>
+
+                            <div className="col-2">
+                                <label htmlFor="input1">CEP</label>
+                                <input className="form-control" id="input1" value={address.postalCode} disabled/>	  
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="col">
+                                <label htmlFor="input1">Bairro</label>
+                                <input className="form-control" id="input1" value={address.district} disabled/>	  
+                            </div>
+
+                            <div className="col">
+                                <label htmlFor="input2">Cidade</label>
+                                <input className="form-control" id="input2" value={address.city} disabled/>	
+                            </div>
+                            
+                            <div className="col">
+                                <label htmlFor="input3">Estado</label>
+                                <input className="form-control" id="input3" value={address.state} disabled/>	  
+                            </div>
+                        </div>
                     </div>
                 </>
             );
@@ -122,9 +111,9 @@ export default class ViewPage extends Component<IViewPageProps, IState>{
                             <div className="box">
                                 <article className="securitytable">
                                     <div className="title">
-                                        <h3>
+                                        <h4>
                                             <strong>Informações pessoais</strong>
-                                        </h3>
+                                        </h4>
                                         <hr className="lightgray-line" />
                                     </div>
                                     <div className="row">
@@ -140,13 +129,23 @@ export default class ViewPage extends Component<IViewPageProps, IState>{
                                         
                                         <div className="col-3">
                                             <label htmlFor="input3">Dt. Nascimento</label>
-                                            <input className="form-control" id="input3" value={person.birthDate} disabled/>	  
+                                            <input className="form-control" id="input3" value={this.formatDate(person.birthDate)} disabled/>	  
                                         </div>
                                     </div>
                                 </article>
                             </div>
+                            <div className="box">
+                                <article className="securitytable">
+                                    <div className="title">
+                                        <h4>
+                                            <strong>Endereços</strong>
+                                        </h4>
+                                    </div>
+                                    
+                                    {this.renderAddress(person)}
+                                </article>
+                            </div>
                             
-                            {this.renderAddress(person)}
 
                             <div className="text-center">
                                 <Link to={"/"}><button className="btn btn-outline-success ms-1">Voltar</button></Link>

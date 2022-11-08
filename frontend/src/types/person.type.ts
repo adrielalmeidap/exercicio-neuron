@@ -4,6 +4,6 @@ export default interface IPersonData {
     id?: any | null,
     fullName: string,
     cpf: string,
-    birthDate: string,
+    birthDate: Date,
     addresses: Array<IAddress>
 }

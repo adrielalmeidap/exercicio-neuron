@@ -32,6 +32,16 @@ export default class HomePage extends Component<IHomePageProps, IState> {
         });
     }
 
+    formatDate(date: Date){
+        const newDate = new Date(date);
+        
+        let day: string = newDate.getDate() > 10 ? "" + (newDate.getDate() + 1) : "0" + (newDate.getDate() + 1);
+        let month: string = newDate.getMonth() > 10 ? "" + (newDate.getMonth() + 1) : "0" + (newDate.getMonth() + 1);
+        let year: number = newDate.getFullYear();
+
+        return `${day}/${month}/${year}`;
+    }
+
     public render(){
         const people = this.state.people;
 
@@ -52,7 +62,7 @@ export default class HomePage extends Component<IHomePageProps, IState> {
                             <tr key={people.id}>
                                 <td>{people.fullName}</td>
                                 <td>{people.cpf}</td>
-                                <td>{people.birthDate.toString()}</td>
+                                <td>{this.formatDate(people.birthDate)}</td>
                                 <td>{people.addresses.length}</td>
                                 <td>
                                     <Link to={"/view/id?" + people.id}>
