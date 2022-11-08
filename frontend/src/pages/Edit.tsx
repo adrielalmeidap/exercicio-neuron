@@ -55,8 +55,8 @@ export default class EditPage extends Component{
     formatDate(date: Date): string{
         const newDate = new Date(date);
 
-        let day: string = newDate.getDate() > 9 ? "" + (newDate.getDate() + 1) : "0" + (newDate.getDate() + 1);
-        let month: string = newDate.getMonth() > 9 ? "" + (newDate.getMonth() + 1) : "0" + (newDate.getMonth() + 1);
+        let day: string = newDate.getDate() >= 9 ? "" + (newDate.getDate() + 1) : "0" + (newDate.getDate() + 1);
+        let month: string = newDate.getMonth() >= 9 ? "" + (newDate.getMonth() + 1) : "0" + (newDate.getMonth() + 1);
         let year: number = newDate.getFullYear();
 
         return `${day}/${month}/${year}`;
@@ -163,9 +163,6 @@ export default class EditPage extends Component{
                                         <div className="row align-items-start">
                                             <div className="col">
                                                 <h4><strong>Endereços</strong></h4>
-                                            </div>
-                                            <div className="col align-left">
-                                                <button className="btn btn-outline-success">Add</button>
                                             </div>
                                         </div>
                                     </div>

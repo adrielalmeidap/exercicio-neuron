@@ -48,8 +48,8 @@ export default class ViewPage extends Component<IViewPageProps, IState>{
     formatDate(date: Date): string{
         const newDate = new Date(date);
 
-        let day: string = newDate.getDate() > 10 ? "" + (newDate.getDate() + 1) : "0" + (newDate.getDate() + 1);
-        let month: string = newDate.getMonth() > 10 ? "" + (newDate.getMonth() + 1) : "0" + (newDate.getMonth() + 1);
+        let day: string = newDate.getDate() >= 9 ? "" + (newDate.getDate() + 1) : "0" + (newDate.getDate() + 1);
+        let month: string = newDate.getMonth() >= 9 ? "" + (newDate.getMonth() + 1) : "0" + (newDate.getMonth() + 1);
         let year: number = newDate.getFullYear();
 
         return `${day}/${month}/${year}`;
@@ -149,7 +149,7 @@ export default class ViewPage extends Component<IViewPageProps, IState>{
 
                             <div className="text-center">
                                 <Link to={"/"}><button className="btn btn-outline-success ms-1">Voltar</button></Link>
-                                <Link to={"/"}><button className="btn btn-outline-warning">Editar</button> </Link>
+                                <Link to={`/person/id?${person.id}`}><button className="btn btn-outline-warning">Editar</button> </Link>
                             </div>
                         </div>
                     </div>
