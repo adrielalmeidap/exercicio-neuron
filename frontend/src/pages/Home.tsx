@@ -32,6 +32,13 @@ export default class HomePage extends Component<IHomePageProps, IState> {
         });
     }
 
+    deletePerson (id: number) {
+        if (window.confirm("Deseja realmente realizar a deleção deste registro?")) {
+            PersonDataService.delete(id);
+            window.location.href =  '/';
+        }
+    }
+
     formatDate(date: Date | string){
         const newDate = new Date(date);
 
@@ -67,7 +74,7 @@ export default class HomePage extends Component<IHomePageProps, IState> {
                                     <button className="btn btn-outline-success"><i className="bi bi-eye"></i></button>
                                   </Link>
                                   <Link to={`/person/id?${people.id}`} className="btn btn-outline-warning"><i className="bi bi-pencil"></i></Link>
-                                  <button className="btn btn-outline-danger"><i className="bi bi-trash3-fill"></i></button>                                  
+                                  <button className="btn btn-outline-danger" onClick={() => this.deletePerson(people.id)}><i className="bi bi-trash3-fill"></i></button>                                  
                                 </td>
                             </tr>
                         )}
