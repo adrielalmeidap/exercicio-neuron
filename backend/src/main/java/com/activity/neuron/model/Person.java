@@ -25,9 +25,6 @@ public class Person {
     private Long id;
     private String fullName;
     private String cpf;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @Temporal(TemporalType.DATE)
     private Date birthDate;
 
     @JsonManagedReference
