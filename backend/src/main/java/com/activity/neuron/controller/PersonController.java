@@ -3,7 +3,6 @@ package com.activity.neuron.controller;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,12 +21,15 @@ import com.activity.neuron.service.PersonService;
 @RequestMapping(value = "/person")
 public class PersonController {
 
-    @Autowired
     private PersonService personService;
+
+    public PersonController(PersonService personService) {
+        this.personService = personService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Person>> getAllPersons() {
-        return ResponseEntity.ok(personService.getAll());
+        return ResponseEntity.ok(personService.getPersons());
     }
 
     @GetMapping(value = "/{idPerson}")
@@ -42,10 +44,14 @@ public class PersonController {
     }
 
     @PostMapping
-    public ResponseEntity<Person> savePerson(@RequestBody Person person) {
+    public ResponseEntity<?> savePerson(@RequestBody Person person) {
         Person newPerson = personService.createPerson(person);
 
-        return new ResponseEntity<Person>(newPerson, HttpStatus.CREATED);
+        if (newPerson != null) {
+            return new ResponseEntity<Person>(newPerson, HttpStatus.CREATED);
+        }
+
+        return new ResponseEntity<>("CPF already is registered", HttpStatus.CONFLICT);
     }
 
     @DeleteMapping(value = "/{idPerson}")
@@ -56,7 +62,7 @@ public class PersonController {
     }
 
     @PutMapping("/{idPerson}")
-    public ResponseEntity<Person> updatePerson(@RequestBody Person personBody, @PathVariable Long idPerson) {
+    public ResponseEntity<?> updatePerson(@RequestBody Person personBody, @PathVariable Long idPerson) {
         Person person = personService.updatePerson(personBody, idPerson);
 
         if (person != null) {

@@ -15,6 +15,33 @@
   font-family: 'Montserrat', 'sans-serif'
 }
 
+.container {
+  position: relative;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.box { 
+  position: relative;
+  width: 100%;
+  background-color: #ffffff;
+  border: 1px solid #D2D8DF;
+  border-radius: 0.3rem;
+  padding: 15px 20px;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+}
+
+.securitytable .title h2 {
+  margin: 0 0 10px;
+}
+hr.lightgray-line {
+  border-top: 1px solid #dedede;
+}
+.securitytable table {
+  width: 100%;
+}
+
 /*Grid*/
 
 .app{

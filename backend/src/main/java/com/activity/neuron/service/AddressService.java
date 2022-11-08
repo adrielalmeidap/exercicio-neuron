@@ -1,15 +1,12 @@
 package com.activity.neuron.service;
 
-import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.activity.neuron.model.Address;
 import com.activity.neuron.repository.AddressRepository;
-import com.activity.neuron.util.Methods;
 
 @Service
 public class AddressService {

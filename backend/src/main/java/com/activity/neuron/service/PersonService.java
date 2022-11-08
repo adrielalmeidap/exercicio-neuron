@@ -14,8 +14,12 @@ public class PersonService {
 
     @Autowired
     PersonRepository personRepository;
+    
+    public PersonService(PersonRepository personRepository) {
+        this.personRepository = personRepository;
+    }
 
-    public List<Person> getAll() {
+    public List<Person> getPersons() {
         return personRepository.findAll();
     }
 
@@ -24,11 +28,15 @@ public class PersonService {
     }
 
     public Person createPerson(Person person) {
+        if(this.checkIfCpfIsAlreadyRegistered(person.getCpf(), 0L)) {
+            return null;
+        }
+
         return personRepository.save(person);
     }
 
     public void deletePerson(Long idPerson) {
-        Optional<Person> optionalPerson = getPersonById(idPerson);
+        Optional<Person> optionalPerson = personRepository.findById(idPerson);
 
         if (optionalPerson.isPresent()) {
             personRepository.deleteById(idPerson);
@@ -36,6 +44,10 @@ public class PersonService {
     }
 
     public Person updatePerson(Person person, long idPerson) {
+        if(this.checkIfCpfIsAlreadyRegistered(person.getCpf(), person.getId())) {
+            return null;
+        }
+
         Person personSaved = this.personRepository.findById(idPerson)
                 .map(personTarget -> {
                     person.setId(idPerson);
@@ -51,5 +63,9 @@ public class PersonService {
         }
 
         return null;
+    }
+
+    private boolean checkIfCpfIsAlreadyRegistered(String cpf, Long id) {
+        return this.personRepository.existsByCpfLikeAndIdNot(cpf, id);
     }
 }

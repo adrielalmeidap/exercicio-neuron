@@ -4,9 +4,13 @@ import IPersonData from "../types/person.type";
 class PersonDataService {
 
 	getAll(){
-        return http.get<Array<IPersonData>>("/person");
+    return http.get<Array<IPersonData>>("/person");
   }
 	
+  get(id: string){
+    return http.get<IPersonData>(`/person/${id}`);
+  }
+
 	getPersonById = async (id: number): Promise<IPersonData | Error> => {
 		try {
 			const { data } = await http.get<IPersonData>(`/person/${id}`);
@@ -20,7 +24,7 @@ class PersonDataService {
 			console.error(error);
 			return new Error((error as { message: string }).message || 'Erro ao consultar o registro.');
 		}
-	};
+	}
 
 	postPerson = async (dados: Omit<IPersonData, 'id'>): Promise<IPersonData | Error> => {
 		try {
@@ -35,7 +39,7 @@ class PersonDataService {
 			console.error(error);
 			return new Error((error as { message: string }).message || 'Erro ao criar o registro.');
 		}
-	};
+	}
 
 	updatePerson = async (dados: IPersonData): Promise<IPersonData | Error> => {
 		try {
@@ -50,8 +54,7 @@ class PersonDataService {
 			console.error(error);
 			return new Error((error as { message: string }).message || 'Erro ao atualizar o registro.');
 		}
-	};
-	
+	}
 }
 
 export default new PersonDataService();

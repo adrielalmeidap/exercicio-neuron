@@ -8,4 +8,5 @@ import com.activity.neuron.model.Person;
 @Repository
 public interface PersonRepository extends JpaRepository<Person, Long> {
 
+    public boolean existsByCpfLikeAndIdNot(String cpf, Long id);
 }
