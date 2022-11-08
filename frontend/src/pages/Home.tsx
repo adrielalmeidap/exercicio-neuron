@@ -65,11 +65,11 @@ export default class HomePage extends Component<IHomePageProps, IState> {
                                 <td>{this.formatDate(people.birthDate)}</td>
                                 <td>{people.addresses.length}</td>
                                 <td>
-                                    <Link to={"/view/id?" + people.id}>
-                                        <button className="btn btn-outline-success"><i className="bi bi-eye"></i></button>
-                                    </Link>
-                                    <button className="btn btn-outline-warning"><i className="bi bi-pencil"></i></button>
-                                    <button className="btn btn-outline-danger"><i className="bi bi-trash3-fill"></i></button>
+                                  <Link to={"/view/id?" + people.id}>
+                                    <button className="btn btn-outline-success"><i className="bi bi-eye"></i></button>
+                                  </Link>
+                                  <Link to={`/person/${people.id}`} className="btn btn-outline-warning"><i className="bi bi-pencil"></i></Link>
+                                  <button className="btn btn-outline-danger"><i className="bi bi-trash3-fill"></i></button>                                  
                                 </td>
                             </tr>
                         )}
