@@ -11,6 +11,7 @@ import "./index.css";
 import { Logo } from './components/logo/logo';
 import { Menu } from './components/menu/menu';
 import ViewPage from './pages/View';
+import EditPage from './pages/Edit';
 
 class App extends Component {
 
@@ -23,7 +24,7 @@ class App extends Component {
         	<Routes>
           	<Route path={"/"} element={<HomePage />} />
             <Route path={"/view/:id"} element={<ViewPage/>} />            
-            <Route path={"/person/:id"} element={<PersonPage />} />
+            <Route path={"/person/:id"} element={<EditPage />} />
         	</Routes>
       	</div>
 			</BrowserRouter>

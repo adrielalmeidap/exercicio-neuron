@@ -35,11 +35,18 @@
 .securitytable .title h2 {
   margin: 0 0 10px;
 }
-hr.lightgray-line {
+
+.hr.lightgray-line {
   border-top: 1px solid #dedede;
 }
+
 .securitytable table {
   width: 100%;
+}
+
+.align-left {
+  display: flex; 
+  justify-content: flex-end
 }
 
 /*Grid*/

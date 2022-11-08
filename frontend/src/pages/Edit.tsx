@@ -4,17 +4,17 @@ import { Link, RouterProps } from 'react-router-dom';
 import { Component } from "react";
 import { Main } from "../components/main/main";
 
-interface IViewPageProps {
+let auxPerson: IPersonData = {
+    id: "",
+    fullName: "",
+    cpf: "",
+    birthDate: new Date(),
+    addresses: []
 }
 
-interface IState {
-    person: IPersonData
-}
-
-export default class ViewPage extends Component<IViewPageProps, IState>{
+export default class EditPage extends Component{
     constructor(props: RouterProps){
         super(props);
-        this.getPerson = this.getPerson.bind(this);
         this.state = { 
             person: {
                 id: "",
@@ -24,6 +24,7 @@ export default class ViewPage extends Component<IViewPageProps, IState>{
                 addresses: []
             }
         };
+        this.getPerson = this.getPerson.bind(this);
     }
 
     componentDidMount(): void {
@@ -35,28 +36,52 @@ export default class ViewPage extends Component<IViewPageProps, IState>{
 
     getPerson(idParam: string): void{
         PersonDataService.get(idParam).then((response: any) => {
-            this.setState({
-                person: response.data
-            });
-            console.log(response.data);
+            auxPerson = response.data;
         }).catch((e: Error) => {
             console.log(e);
             window.location.href = "/";
+        });
+    }
+    
+    savePerson(): void {
+        PersonDataService.updatePerson(auxPerson).then((response: any) => {
+            console.log(response.data);
+        }).catch((e: Error) => {
+            console.log(e);
+            window.location.href = "/person/id?" + auxPerson.id;
         });
     }
 
     formatDate(date: Date): string{
         const newDate = new Date(date);
 
-        let day: string = newDate.getDate() > 10 ? "" + (newDate.getDate() + 1) : "0" + (newDate.getDate() + 1);
-        let month: string = newDate.getMonth() > 10 ? "" + (newDate.getMonth() + 1) : "0" + (newDate.getMonth() + 1);
+        let day: string = newDate.getDate() > 9 ? "" + (newDate.getDate() + 1) : "0" + (newDate.getDate() + 1);
+        let month: string = newDate.getMonth() > 9 ? "" + (newDate.getMonth() + 1) : "0" + (newDate.getMonth() + 1);
         let year: number = newDate.getFullYear();
 
         return `${day}/${month}/${year}`;
     }
 
+    updateInfoPerson(e: any): void {
+        const { name, value } = e.target;
+        
+        if(name === "fullName") auxPerson.fullName = value;
+        else if(name === "cpf") auxPerson.cpf = value;
+    };
+
+    updateAddress(index: number, e: any): void {
+        const { name, value } = e.target;
+        
+        if(name === "street") auxPerson.addresses[index].street = value;
+        else if(name === "complement") auxPerson.addresses[index].complement = value;
+        else if(name === "postalCode") auxPerson.addresses[index].postalCode = value;
+        else if(name === "district") auxPerson.addresses[index].district = value;
+        else if(name === "city") auxPerson.addresses[index].city = value;
+        else if(name === "state") auxPerson.addresses[index].state = value;
+    };
+
     renderAddress(person: IPersonData){
-        return  this.state.person.addresses.map( address => {
+        return  person.addresses.map( (address, index) => {
             return (
                 <>
                     <div>
@@ -64,34 +89,34 @@ export default class ViewPage extends Component<IViewPageProps, IState>{
                         <div className="row">
                             <div className="col-6">
                                 <label htmlFor="input1">Rua</label>
-                                <input className="form-control" id="input1" value={address.street} disabled/>	  
+                                <input className="form-control" name="street" id="input1" defaultValue={address.street} onChange={(e) => this.updateAddress(index, e)}/>	  
                             </div>
 
                             <div className="col-4">
                                 <label htmlFor="input1">Complemento</label>
-                                <input className="form-control" id="input1" value={address.complement} disabled/>	  
+                                <input className="form-control" name="complement" id="input1" defaultValue={address.complement} onChange={(e) => this.updateAddress(index, e)}/>	  
                             </div>
 
                             <div className="col-2">
                                 <label htmlFor="input1">CEP</label>
-                                <input className="form-control" id="input1" value={address.postalCode} disabled/>	  
+                                <input className="form-control" name="postalCode" id="input1" defaultValue={address.postalCode} onChange={(e) => this.updateAddress(index, e)}/>	  
                             </div>
                         </div>
 
                         <div className="row">
                             <div className="col">
                                 <label htmlFor="input1">Bairro</label>
-                                <input className="form-control" id="input1" value={address.district} disabled/>	  
+                                <input className="form-control" name="district" id="input1" defaultValue={address.district} onChange={(e) => this.updateAddress(index, e)}/>	  
                             </div>
 
                             <div className="col">
                                 <label htmlFor="input2">Cidade</label>
-                                <input className="form-control" id="input2" value={address.city} disabled/>	
+                                <input className="form-control" name="city" id="input2" defaultValue={address.city} onChange={(e) => this.updateAddress(index, e)}/>	
                             </div>
                             
                             <div className="col">
                                 <label htmlFor="input3">Estado</label>
-                                <input className="form-control" id="input3" value={address.state} disabled/>	  
+                                <input className="form-control"  name="state" id="input3" defaultValue={address.state} onChange={(e) => this.updateAddress(index, e)}/>	  
                             </div>
                         </div>
                     </div>
@@ -101,8 +126,6 @@ export default class ViewPage extends Component<IViewPageProps, IState>{
     }
 
     public render(){
-        const person = this.state.person;
-
         return (
             <Main icon='user' title="Página do cliente" subtitle="Perfil do cliente">
                 <>
@@ -119,17 +142,17 @@ export default class ViewPage extends Component<IViewPageProps, IState>{
                                     <div className="row">
                                         <div className="col-6">
                                             <label htmlFor="input1">Nome completo</label>
-                                            <input className="form-control" id="input1" value={person.fullName} disabled/>	  
+                                            <input className="form-control" name="fullName" id="input1" defaultValue={auxPerson.fullName} onChange={(e) => this.updateInfoPerson(e)}/>	  
                                         </div>
 
                                         <div className="col-3">
                                             <label htmlFor="input2">CPF</label>
-                                            <input className="form-control" id="input2" value={person.cpf} disabled/>	
+                                            <input className="form-control" name="cpf" id="input2" defaultValue={auxPerson.cpf} onChange={(e) => this.updateInfoPerson(e)}/>	
                                         </div>
                                         
                                         <div className="col-3">
                                             <label htmlFor="input3">Dt. Nascimento</label>
-                                            <input className="form-control" id="input3" value={this.formatDate(person.birthDate)} disabled/>	  
+                                            <input className="form-control" name="birthDate" id="input3" defaultValue={this.formatDate(auxPerson.birthDate)} disabled/>	  
                                         </div>
                                     </div>
                                 </article>
@@ -137,19 +160,24 @@ export default class ViewPage extends Component<IViewPageProps, IState>{
                             <div className="box">
                                 <article className="securitytable">
                                     <div className="title">
-                                        <h4>
-                                            <strong>Endereços</strong>
-                                        </h4>
+                                        <div className="row align-items-start">
+                                            <div className="col">
+                                                <h4><strong>Endereços</strong></h4>
+                                            </div>
+                                            <div className="col align-left">
+                                                <button className="btn btn-outline-success">Add</button>
+                                            </div>
+                                        </div>
                                     </div>
                                     
-                                    {this.renderAddress(person)}
+                                    {this.renderAddress(auxPerson)}
                                 </article>
                             </div>
                             
 
                             <div className="text-center">
                                 <Link to={"/"}><button className="btn btn-outline-success ms-1">Voltar</button></Link>
-                                <Link to={"/"}><button className="btn btn-outline-warning">Editar</button> </Link>
+                                <Link to={"/"}><button className="btn btn-outline-warning" onClick={this.savePerson}>Salvar</button></Link>
                             </div>
                         </div>
                     </div>

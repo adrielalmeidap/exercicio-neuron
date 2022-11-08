@@ -32,9 +32,9 @@ export default class HomePage extends Component<IHomePageProps, IState> {
         });
     }
 
-    formatDate(date: Date){
+    formatDate(date: Date | string){
         const newDate = new Date(date);
-        
+
         let day: string = newDate.getDate() > 10 ? "" + (newDate.getDate() + 1) : "0" + (newDate.getDate() + 1);
         let month: string = newDate.getMonth() > 10 ? "" + (newDate.getMonth() + 1) : "0" + (newDate.getMonth() + 1);
         let year: number = newDate.getFullYear();
@@ -68,7 +68,7 @@ export default class HomePage extends Component<IHomePageProps, IState> {
                                   <Link to={"/view/id?" + people.id}>
                                     <button className="btn btn-outline-success"><i className="bi bi-eye"></i></button>
                                   </Link>
-                                  <Link to={`/person/${people.id}`} className="btn btn-outline-warning"><i className="bi bi-pencil"></i></Link>
+                                  <Link to={`/person/id?${people.id}`} className="btn btn-outline-warning"><i className="bi bi-pencil"></i></Link>
                                   <button className="btn btn-outline-danger"><i className="bi bi-trash3-fill"></i></button>                                  
                                 </td>
                             </tr>
