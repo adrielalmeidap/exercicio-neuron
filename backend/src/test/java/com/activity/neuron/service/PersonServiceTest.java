@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.activity.neuron.dto.PersonDTO;
 import com.activity.neuron.model.Person;
 import com.activity.neuron.repository.PersonRepository;
 
@@ -60,11 +61,14 @@ public class PersonServiceTest {
         List<Person> persons = new ArrayList<>();
         persons.add(person);
 
+        List<PersonDTO> personsDTO = new ArrayList<>();
+        personsDTO.add(new PersonDTO(person.getId(), person.getFullName(), person.getCpf(), person.getBirthDate()));
+
         when(personRepository.findAll()).thenReturn(persons);
 
-        List<Person> personsExpected = personService.getPersons();
+        List<PersonDTO> personsExpected = personService.getPersons();
 
-        assertEquals(personsExpected, persons);
+        assertEquals(personsExpected, personsDTO);
     }
 
     @DisplayName("Test method createPerson")

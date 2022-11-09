@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.activity.neuron.dto.PersonDTO;
+import com.activity.neuron.exception.CpfAlreadyRegisteredException;
+import com.activity.neuron.exception.ResourceNotFoundException;
 import com.activity.neuron.model.Person;
+import com.activity.neuron.model.ResponseError;
 import com.activity.neuron.service.PersonService;
 
 @CrossOrigin
@@ -30,7 +35,7 @@ public class PersonController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Person>> getAllPersons() {
+    public ResponseEntity<List<PersonDTO>> getAllPersons() {
         return ResponseEntity.ok(personService.getPersons());
     }
 
@@ -42,7 +47,7 @@ public class PersonController {
             return new ResponseEntity<Person>(newPerson.get(), HttpStatus.OK);
         }
 
-        return ResponseEntity.notFound().build();
+        throw new ResourceNotFoundException("Not found Person with id = " + idPerson);
     }
 
     @PostMapping
@@ -53,7 +58,8 @@ public class PersonController {
             return new ResponseEntity<Person>(newPerson, HttpStatus.CREATED);
         }
 
-        return new ResponseEntity<>("CPF already is registered", HttpStatus.CONFLICT);
+        return new ResponseEntity<>(new ResponseError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Unknow Error"),
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @DeleteMapping(value = "/{idPerson}")
@@ -72,5 +78,19 @@ public class PersonController {
         }
 
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(CpfAlreadyRegisteredException.class)
+    public ResponseEntity<ResponseError> exceptionCpfAlreadyRegistered(Exception ex) {
+        ResponseError error = new ResponseError(HttpStatus.CONFLICT.value(), ex.getMessage());
+
+        return new ResponseEntity<ResponseError>(error, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ResponseError> exceptionResourceNotFound(Exception ex) {
+        ResponseError error = new ResponseError(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+
+        return new ResponseEntity<ResponseError>(error, HttpStatus.NOT_FOUND);
     }
 }

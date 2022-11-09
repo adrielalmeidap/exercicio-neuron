@@ -4,6 +4,7 @@ import { Main } from "../components/main/main";
 import IAddress from '../types/address.type';
 import React from 'react';
 import IPersonInputData from '../types/personInput.type';
+import { cepMask, cpfMask } from '../utils/masks';
 
 export interface ICreatePageProps {}
 export interface ICreatePageState {
@@ -54,7 +55,7 @@ class CreatePage extends React.Component<ICreatePageProps, ICreatePageState> {
 
                         <div className="col-2">
                             <label htmlFor="input1">CEP</label>
-                            <input className="form-control" name="postalCode" id="input1" defaultValue={value.postalCode} onChange={(e) => this.updateAddress(index, e)}/>	  
+                            <input className="form-control" name="postalCode" id="input1" value={cepMask(value.postalCode)} onChange={(e) => this.updateAddress(index, e)}/>	  
                         </div>
                     </div>
 
@@ -97,7 +98,7 @@ class CreatePage extends React.Component<ICreatePageProps, ICreatePageState> {
 
     handleAdd() {
         const address: IAddress = {
-            id: "",
+            id: null,
             postalCode: "",
             district: "",
             city: "",
@@ -133,9 +134,9 @@ class CreatePage extends React.Component<ICreatePageProps, ICreatePageState> {
         mapAddress.forEach(value => person.addresses.push(value));
         PersonDataService.postPerson(person).then((response: any) => {
             console.log(response.data);
-            
+
             window.confirm("Cliente cadastrado com sucesso !!");
-            window.location.href =  '/';
+            window.location.href = '/';
         }).catch((e: any) => {
             console.log(e);
             window.confirm("CPF inválido !!");
@@ -143,12 +144,16 @@ class CreatePage extends React.Component<ICreatePageProps, ICreatePageState> {
     }
 
     updateInfoPerson(e: ChangeEvent<HTMLInputElement>): void {
-        const person: IPersonInputData = this.state.person;
+        const personAux: IPersonInputData = this.state.person;
         const { name, value } = e.target;
 
-        if(name === "fullName") person.fullName = value;
-        else if(name === "cpf") person.cpf = value;
-        else if(name === "birthDate") person.birthDate = value;
+        if(name === "fullName") personAux.fullName = value;
+        else if(name === "cpf") personAux.cpf = cpfMask(value);
+        else if(name === "birthDate") personAux.birthDate = value;
+
+        this.setState({
+            person: personAux,
+        });
     };
 
     updateAddress(index: number, e: any): void {
@@ -158,7 +163,7 @@ class CreatePage extends React.Component<ICreatePageProps, ICreatePageState> {
 
         if(name === "street") address.street = value;
         else if(name === "complement") address.complement = value;
-        else if(name === "postalCode") address.postalCode = value;
+        else if(name === "postalCode") address.postalCode = cepMask(value);
         else if(name === "district") address.district = value;
         else if(name === "city") address.city = value;
         else if(name === "state") address.state = value;
@@ -169,7 +174,8 @@ class CreatePage extends React.Component<ICreatePageProps, ICreatePageState> {
         });
     };
 
-    public render(){
+    public render() {
+        const person: IPersonInputData = this.state.person;
         return (
             <Main icon='user' title="Página do cliente" subtitle="Perfil do cliente">
                 <>
@@ -191,9 +197,9 @@ class CreatePage extends React.Component<ICreatePageProps, ICreatePageState> {
 
                                         <div className="col-3">
                                             <label htmlFor="input2">CPF</label>
-                                            <input className="form-control" name="cpf" onChange={(e) => this.updateInfoPerson(e)}/>	
+                                            <input className="form-control" name="cpf" id="input2" value={cpfMask(person.cpf)} onChange={(e) => this.updateInfoPerson(e)} />
                                         </div>
-                                        
+
                                         <div className="col-3">
                                             <label htmlFor="input3">Dt. Nascimento</label>
                                             <input type="date" className="form-control" name="birthDate" onChange={(e) => this.updateInfoPerson(e)}/>	  
@@ -217,7 +223,7 @@ class CreatePage extends React.Component<ICreatePageProps, ICreatePageState> {
                                     {this.renderAddresses()}
                                 </article>
                             </div>
-                            
+
 
                             <div className="text-center">
                                 <button className="btn btn-outline-success" onClick={this.savePerson}>Salvar</button>

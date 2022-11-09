@@ -6,10 +6,10 @@ export const Menu: React.FC = () => {
         <aside className="menu-area">
             <nav className="menu">
                 <Link to="/">
-                    <i className="fa fa-home"></i> Pagina inicial
+                    <i className="fa fa-home"></i> Página Inicial
                 </Link>
                 <Link to={"/create"}>
-                    <i className="bi bi-globe"></i> Novo Cadastro
+                    <i className="fa fa-user-plus"></i> Novo Cadastro
                 </Link>
             </nav>
         </aside>

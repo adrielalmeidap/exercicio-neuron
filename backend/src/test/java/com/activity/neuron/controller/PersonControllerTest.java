@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import com.activity.neuron.dto.PersonDTO;
 import com.activity.neuron.model.Person;
 import com.activity.neuron.service.PersonService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,8 +41,8 @@ public class PersonControllerTest {
 
     @Test
     public void getPersons_Success() throws Exception {
-        List<Person> persons = new ArrayList<>();
-        persons.add(person);
+        List<PersonDTO> persons = new ArrayList<>();
+        persons.add(new PersonDTO(person.getId(), person.getFullName(), person.getCpf(), person.getBirthDate()));
 
         when(personService.getPersons()).thenReturn(persons);
 

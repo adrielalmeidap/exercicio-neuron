@@ -2,10 +2,13 @@ package com.activity.neuron.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.activity.neuron.dto.PersonDTO;
+import com.activity.neuron.exception.CpfAlreadyRegisteredException;
 import com.activity.neuron.model.Person;
 import com.activity.neuron.repository.PersonRepository;
 
@@ -19,8 +22,8 @@ public class PersonService {
         this.personRepository = personRepository;
     }
 
-    public List<Person> getPersons() {
-        return personRepository.findAll();
+    public List<PersonDTO> getPersons() {
+        return personRepository.findAll().stream().map(p -> new PersonDTO().personToDTO(p)).collect(Collectors.toList());
     }
 
     public Optional<Person> getPersonById(Long idPerson) {
@@ -29,7 +32,7 @@ public class PersonService {
 
     public Person createPerson(Person person) {
         if(this.checkIfCpfIsAlreadyRegistered(person.getCpf(), 0L)) {
-            return null;
+            throw new CpfAlreadyRegisteredException("CPF already is registered");
         }
 
         return personRepository.save(person);
@@ -45,7 +48,7 @@ public class PersonService {
 
     public Person updatePerson(Person person, long idPerson) {
         if(this.checkIfCpfIsAlreadyRegistered(person.getCpf(), person.getId())) {
-            return null;
+            throw new CpfAlreadyRegisteredException("CPF already is registered");
         }
 
         Person personSaved = this.personRepository.findById(idPerson)
