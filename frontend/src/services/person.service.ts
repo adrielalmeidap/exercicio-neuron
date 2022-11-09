@@ -1,5 +1,6 @@
 import http from "../http-common";
 import IPersonData from "../types/person.type";
+import IPersonInputData from "../types/personInput.type";
 
 class PersonDataService {
 
@@ -30,9 +31,9 @@ class PersonDataService {
 		}
 	}
 
-	postPerson = async (dados: Omit<IPersonData, 'id'>): Promise<IPersonData | Error> => {
+	postPerson = async (dados: Omit<IPersonInputData, 'id'>): Promise<IPersonInputData | Error> => {
 		try {
-			const { data } = await http.post<IPersonData>('/person', dados);
+			const { data } = await http.post<IPersonInputData>('/person', dados);
 
 			if (data) {
 				return data;
