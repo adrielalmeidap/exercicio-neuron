@@ -3,6 +3,7 @@ import PersonDataService from '../services/person.service';
 import { Link, RouterProps } from 'react-router-dom';
 import { Component } from "react";
 import { Main } from "../components/main/main";
+import { formatDate } from '../utils/dateFormat';
 
 interface IViewPageProps {
 }
@@ -43,16 +44,6 @@ export default class ViewPage extends Component<IViewPageProps, IState>{
             console.log(e);
             window.location.href = "/";
         });
-    }
-
-    formatDate(date: Date): string{
-        const newDate = new Date(date);
-
-        let day: string = newDate.getDate() >= 9 ? "" + (newDate.getDate() + 1) : "0" + (newDate.getDate() + 1);
-        let month: string = newDate.getMonth() >= 9 ? "" + (newDate.getMonth() + 1) : "0" + (newDate.getMonth() + 1);
-        let year: number = newDate.getFullYear();
-
-        return `${day}/${month}/${year}`;
     }
 
     renderAddress(person: IPersonData){
@@ -129,7 +120,7 @@ export default class ViewPage extends Component<IViewPageProps, IState>{
                                         
                                         <div className="col-3">
                                             <label htmlFor="input3">Dt. Nascimento</label>
-                                            <input className="form-control" id="input3" value={this.formatDate(person.birthDate)} disabled/>	  
+                                            <input type="date" className="form-control" id="input3" value={formatDate(person.birthDate, "en_US")} disabled/>	  
                                         </div>
                                     </div>
                                 </article>
@@ -148,8 +139,8 @@ export default class ViewPage extends Component<IViewPageProps, IState>{
                             
 
                             <div className="text-center">
-                                <Link to={"/"}><button className="btn btn-outline-success ms-1">Voltar</button></Link>
-                                <Link to={`/person/id?${person.id}`}><button className="btn btn-outline-warning">Editar</button> </Link>
+                                <Link to={"/"}><button className="btn btn-outline-success m-1">Voltar</button></Link>
+                                <Link to={`/person/id?${person.id}`}><button className="btn btn-outline-warning m-1">Editar</button> </Link>
                             </div>
                         </div>
                     </div>

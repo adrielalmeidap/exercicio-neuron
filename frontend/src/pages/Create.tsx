@@ -2,7 +2,7 @@ import PersonDataService from '../services/person.service';
 import { Link } from 'react-router-dom';
 import { Component } from "react";
 import { Main } from "../components/main/main";
-import { cpfMask, cepMask } from '../utils/masks'
+import { cpfMask, cepMask } from '../utils/masks';
 
 let auxPerson: any = {
     id: "",
@@ -43,19 +43,21 @@ export default class CreatePage extends Component {
         auxPerson.addresses.push(address);
     }
     savePerson(): void {
-        if (auxPerson.addresses.length > 1) {
-            auxPerson.addresses.splice(1, 1);
-        }
-
-        PersonDataService.postPerson(auxPerson).then((response: any) => {
-            console.log(response.data);
-
-            window.confirm("Cliente cadastrado com sucesso !!");
-            window.location.href = '/';
-        }).catch((e: any) => {
+		if (auxPerson.addresses.length > 1) {
+			auxPerson.addresses.splice(1, 1);
+		}
+	
+		PersonDataService.postPerson(auxPerson).then((response: any) => {
+			if (response instanceof Error) {
+				alert("CPF já cadastrado");
+			} else {
+				alert("Cliente cadastrado com sucesso !!");
+				window.location.href = '/';
+			}
+        }).catch((e: Error) => {
             console.log(e);
-            window.confirm("CPF inválido !!");
-        });
+		});
+
     }
 
     checkCEP: any = (e: any) => {
@@ -73,19 +75,8 @@ export default class CreatePage extends Component {
         }
     }
 
-    formatDate(date: Date): string {
-        const newDate = new Date(date);
-
-        let day: string = newDate.getDate() > 9 ? "" + (newDate.getDate() + 1) : "0" + (newDate.getDate() + 1);
-        let month: string = newDate.getMonth() > 9 ? "" + (newDate.getMonth() + 1) : "0" + (newDate.getMonth() + 1);
-        let year: number = newDate.getFullYear();
-
-        return `${day}/${month}/${year}`;
-    }
-
     updateInfoPerson(e: any): void {
         const { name, value } = e.target;
-        console.log(value);
 
         if (name === "fullName") auxPerson.fullName = value;
         else if (name === "cpf") {
@@ -193,8 +184,8 @@ export default class CreatePage extends Component {
 
 
                             <div className="text-center">
-                                <Link to={"/"}><button className="btn btn-outline-success ms-1">Voltar</button></Link>
-                                <button className="btn btn-outline-warning" onClick={this.savePerson}>Salvar</button>
+                                <Link to={"/"}><button className="btn btn-outline-success m-1">Voltar</button></Link>
+                                <Link to={""} className="btn btn-outline-warning m-1" onClick={this.savePerson}>Salvar</Link>
                             </div>
                         </div>
                     </div>

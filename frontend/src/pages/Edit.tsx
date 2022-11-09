@@ -3,6 +3,8 @@ import PersonDataService from '../services/person.service';
 import { Link, RouterProps } from 'react-router-dom';
 import { Component } from "react";
 import { Main } from "../components/main/main";
+import { cpfMask, cepMask } from '../utils/masks';
+import { formatDate } from '../utils/dateFormat';
 
 let auxPerson: IPersonData = {
     id: "",
@@ -42,7 +44,6 @@ export default class EditPage extends Component{
     }
 
     async getPerson(idParam: string): Promise<void>{
-        debugger;
         await PersonDataService.get(idParam).then((response: any) => {
             auxPerson = response.data;
             this.setState(auxPerson);
@@ -54,28 +55,30 @@ export default class EditPage extends Component{
     
     savePerson(): void {
         PersonDataService.updatePerson(auxPerson).then((response: any) => {
-            console.log(response.data);
+			if (response instanceof Error) {
+				alert("CPF já cadastrado");
+			} else {
+				alert("Cliente alterado com sucesso !!");
+			}
         }).catch((e: Error) => {
             console.log(e);
             window.location.href = "/person/id?" + auxPerson.id;
         });
     }
 
-    formatDate(date: Date): string{
-        const newDate = new Date(date);
-
-        let day: string = newDate.getDate() >= 9 ? "" + (newDate.getDate() + 1) : "0" + (newDate.getDate() + 1);
-        let month: string = newDate.getMonth() >= 9 ? "" + (newDate.getMonth() + 1) : "0" + (newDate.getMonth() + 1);
-        let year: number = newDate.getFullYear();
-
-        return `${day}/${month}/${year}`;
-    }
-
     updateInfoPerson(e: any): void {
         const { name, value } = e.target;
-        
+      
         if(name === "fullName") auxPerson.fullName = value;
-        else if(name === "cpf") auxPerson.cpf = value;
+        else if(name === "cpf") {
+			auxPerson.cpf = cpfMask(value);
+			this.setState(auxPerson);
+		}
+		else if(name === "birthDate") {
+			auxPerson.birthDate = value;
+			this.setState(auxPerson);
+		} 
+
     };
 
     updateAddress(index: number, e: any): void {
@@ -83,7 +86,10 @@ export default class EditPage extends Component{
         
         if(name === "street") auxPerson.addresses[index].street = value;
         else if(name === "complement") auxPerson.addresses[index].complement = value;
-        else if(name === "postalCode") auxPerson.addresses[index].postalCode = value;
+        else if(name === "postalCode") {
+			auxPerson.addresses[index].postalCode = cepMask(value);
+			this.setState(auxPerson);
+		}
         else if(name === "district") auxPerson.addresses[index].district = value;
         else if(name === "city") auxPerson.addresses[index].city = value;
         else if(name === "state") auxPerson.addresses[index].state = value;
@@ -108,7 +114,7 @@ export default class EditPage extends Component{
 
                             <div className="col-2">
                                 <label htmlFor="input1">CEP</label>
-                                <input className="form-control" name="postalCode" id="input1" defaultValue={address.postalCode} onChange={(e) => this.updateAddress(index, e)}/>	  
+                                <input className="form-control" name="postalCode" id="input1" value={cepMask(address.postalCode)} onChange={(e) => this.updateAddress(index, e)}/>	  
                             </div>
                         </div>
 
@@ -156,12 +162,12 @@ export default class EditPage extends Component{
 
                                         <div className="col-3">
                                             <label htmlFor="input2">CPF</label>
-                                            <input className="form-control" name="cpf" id="input2" defaultValue={auxPerson.cpf} onChange={(e) => this.updateInfoPerson(e)}/>	
+                                            <input className="form-control" name="cpf" id="input2" value={cpfMask(auxPerson.cpf)} onChange={(e) => this.updateInfoPerson(e)}/>	
                                         </div>
                                         
                                         <div className="col-3">
                                             <label htmlFor="input3">Dt. Nascimento</label>
-                                            <input className="form-control" name="birthDate" id="input3" defaultValue={this.formatDate(auxPerson.birthDate)} disabled/>	  
+                                            <input type="date" className="form-control" name="birthDate" id="input3" value={formatDate(auxPerson.birthDate, "en_US")} onChange={(e) => this.updateInfoPerson(e)} />	  
                                         </div>
                                     </div>
                                 </article>
@@ -182,8 +188,8 @@ export default class EditPage extends Component{
                             
 
                             <div className="text-center">
-                                <Link to={"/"}><button className="btn btn-outline-success ms-1">Voltar</button></Link>
-                                <Link to={"/"}><button className="btn btn-outline-warning" onClick={this.savePerson}>Salvar</button></Link>
+                                <Link to={"/"}><button className="btn btn-outline-success m-1">Voltar</button></Link>
+                                <Link to={""}><button className="btn btn-outline-warning m-1" onClick={this.savePerson}>Salvar</button></Link>
                             </div>
                         </div>
                     </div>

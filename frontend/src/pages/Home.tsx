@@ -3,6 +3,7 @@ import IPersonData from '../types/person.type';
 import PersonDataService from '../services/person.service';
 import { Main } from '../components/main/main';
 import { Link } from 'react-router-dom';
+import { formatDate } from '../utils/dateFormat';
 
 export interface IHomePageProps {}
 
@@ -40,16 +41,6 @@ export default class HomePage extends Component<IHomePageProps, IState> {
         }
     }
 
-    formatDate(date: Date | string){
-        const newDate = new Date(date);
-
-        let day: string = newDate.getDate() >= 9 ? "" + (newDate.getDate() + 1) : "0" + (newDate.getDate() + 1);
-        let month: string = newDate.getMonth() >= 9 ? "" + (newDate.getMonth() + 1) : "0" + (newDate.getMonth() + 1);
-        let year: number = newDate.getFullYear();
-
-        return `${day}/${month}/${year}`;
-    }
-
     public render(){
         const people = this.state.people;
 
@@ -69,13 +60,11 @@ export default class HomePage extends Component<IHomePageProps, IState> {
                             <tr id={'person' + people.id} key={people.id}>
                                 <td>{people.fullName}</td>
                                 <td>{people.cpf}</td>
-                                <td>{this.formatDate(people.birthDate)}</td>
+                                <td>{formatDate(people.birthDate, "pt_BR")}</td>
                                 <td>
-                                  <Link to={"/view/id?" + people.id}>
-                                    <button className="btn btn-outline-success"><i className="bi bi-eye"></i></button>
-                                  </Link>
-                                  <Link to={`/person/id?${people.id}`} className="btn btn-outline-warning"><i className="bi bi-pencil"></i></Link>
-                                  <button className="btn btn-outline-danger" onClick={() => this.deletePerson(people.id)}><i className="bi bi-trash3-fill"></i></button>                                  
+                                  <Link to={"/view/id?" + people.id} className="btn btn-outline-success m-1"><i className="bi bi-eye"></i></Link>
+                                  <Link to={`/person/id?${people.id}`} className="btn btn-outline-warning m-1"><i className="bi bi-pencil"></i></Link>
+                                  <button className="btn btn-outline-danger m-1" onClick={() => this.deletePerson(people.id)}><i className="bi bi-trash3-fill"></i></button>                                  
                                 </td>
                             </tr>
                         )}
