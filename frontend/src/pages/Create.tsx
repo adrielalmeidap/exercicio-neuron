@@ -1,20 +1,103 @@
 import PersonDataService from '../services/person.service';
-import { Link } from 'react-router-dom';
-import { Component } from "react";
+import { ChangeEvent } from "react";
 import { Main } from "../components/main/main";
+import IAddress from '../types/address.type';
+import React from 'react';
+import IPersonInputData from '../types/personInput.type';
 
-let auxPerson: any = {
-    id: "",
-    fullName: "",
-    cpf: "",
-    birthDate: new Date(),
-    addresses: []
+export interface ICreatePageProps {}
+export interface ICreatePageState {
+    lastIndex: number, 
+    person: IPersonInputData,
+    mapAddress: Map<number, IAddress>,
+    addressList: any[]
 }
 
-export default class CreatePage extends Component { 
-    componentDidMount(): void {
-        let address = {
-            id:  null,
+class CreatePage extends React.Component<ICreatePageProps, ICreatePageState> {
+    constructor(props: ICreatePageProps){
+        super(props);
+
+        this.state = {
+            lastIndex: 0, 
+            person: {
+                id: "",
+                fullName: "",
+                cpf: "",
+                birthDate: "",
+                addresses: []
+            },
+            mapAddress: new Map<number, IAddress>(),
+            addressList: []
+        }
+
+        this.handleAdd = this.handleAdd.bind(this);
+        this.handleRemove = this.handleRemove.bind(this);
+        this.updateAddress = this.updateAddress.bind(this);
+        this.savePerson = this.savePerson.bind(this);
+    } 
+
+    renderDiv(index: number, value: IAddress) {
+        return <>
+            <div key={index} className='row'>
+                <hr className="lightgray-line mt-3" />
+                <div className='col-10'>
+                    <div className="row">
+                        <div className="col-6">
+                            <label htmlFor="input1">Rua</label>
+                            <input className="form-control" name="street" id="input1" defaultValue={value.street} onChange={(e) => this.updateAddress(index, e)}/>	  
+                        </div>
+
+                        <div className="col-4">
+                            <label htmlFor="input1">Complemento</label>
+                            <input className="form-control" name="complement" id="input1" defaultValue={value.complement} onChange={(e) => this.updateAddress(index, e)}/>	  
+                        </div>
+
+                        <div className="col-2">
+                            <label htmlFor="input1">CEP</label>
+                            <input className="form-control" name="postalCode" id="input1" defaultValue={value.postalCode} onChange={(e) => this.updateAddress(index, e)}/>	  
+                        </div>
+                    </div>
+
+                    <div className="row">
+                        <div className="col">
+                            <label htmlFor="input1">Bairro</label>
+                            <input className="form-control" name="district" id="input1" defaultValue={value.district} onChange={(e) => this.updateAddress(index, e)}/>	  
+                        </div>
+
+                        <div className="col">
+                            <label htmlFor="input2">Cidade</label>
+                            <input className="form-control" name="city" id="input2" defaultValue={value.city} onChange={(e) => this.updateAddress(index, e)}/>	
+                        </div>
+                        
+                        <div className="col">
+                            <label htmlFor="input3">Estado</label>
+                            <input className="form-control"  name="state" id="input3" defaultValue={value.state} onChange={(e) => this.updateAddress(index, e)}/>	  
+                        </div>
+                    </div>
+                </div>
+                <div className='col-2'>
+                    <button className="btn btn-outline-warning" onClick={() => this.handleRemove(index)}>remover</button>
+                </div>
+            </div>
+        </>
+    }
+
+    handleRemove(index: number){
+        const map: Map<number, IAddress> = this.state.mapAddress;;
+
+        if(map.has(index)){
+            map.delete(index);
+        }
+
+        this.setState({
+            addressList: this.state.addressList.filter((address) => address.props.children.key !== "" + index),
+            mapAddress: map
+        });
+    }
+
+    handleAdd() {
+        const address: IAddress = {
+            id: "",
             postalCode: "",
             district: "",
             city: "",
@@ -22,15 +105,33 @@ export default class CreatePage extends Component {
             complement: "",
             state: ""
         }
-        
-        auxPerson.addresses.push(address);
-    }
-    savePerson(): void {
-        if(auxPerson.addresses.length > 1){
-            auxPerson.addresses.splice(1, 1);
-        }
 
-        PersonDataService.postPerson(auxPerson).then((response: any) => {
+        this.state.mapAddress.set(this.state.lastIndex, address);
+        this.state.addressList.push(this.renderDiv(this.state.lastIndex, address));
+        this.setState({
+            addressList: this.state.addressList,
+            lastIndex: this.state.lastIndex + 1
+        });
+
+    }
+
+    renderAddresses = () => {
+        const list = this.state.addressList;
+        const map = this.state.mapAddress;
+
+        return list.map((divAddress: any) => {
+            const key: number = parseInt(divAddress.props.children.key);
+            const address: any = map.get(key);
+            return this.renderDiv(key, address);
+        });
+    }
+
+    savePerson(): void {
+        const mapAddress = this.state.mapAddress;
+        const person: IPersonInputData = this.state.person;
+        
+        mapAddress.forEach(value => person.addresses.push(value));
+        PersonDataService.postPerson(person).then((response: any) => {
             console.log(response.data);
             
             window.confirm("Cliente cadastrado com sucesso !!");
@@ -41,36 +142,31 @@ export default class CreatePage extends Component {
         });
     }
 
-    formatDate(date: Date): string{
-        const newDate = new Date(date);
-
-        let day: string = newDate.getDate() > 9 ? "" + (newDate.getDate() + 1) : "0" + (newDate.getDate() + 1);
-        let month: string = newDate.getMonth() > 9 ? "" + (newDate.getMonth() + 1) : "0" + (newDate.getMonth() + 1);
-        let year: number = newDate.getFullYear();
-
-        return `${day}/${month}/${year}`;
-    }
-
-    updateInfoPerson(e: any): void {
+    updateInfoPerson(e: ChangeEvent<HTMLInputElement>): void {
+        const person: IPersonInputData = this.state.person;
         const { name, value } = e.target;
-        console.log(value);
 
-        if(name === "fullName") auxPerson.fullName = value;
-        else if(name === "cpf") auxPerson.cpf = value;
-        else if(name === "birthDate") auxPerson.birthDate = value;
+        if(name === "fullName") person.fullName = value;
+        else if(name === "cpf") person.cpf = value;
+        else if(name === "birthDate") person.birthDate = value;
     };
 
     updateAddress(index: number, e: any): void {
         const { name, value } = e.target;
+        const map: Map<number, IAddress> = this.state.mapAddress;
+        const address: any = map.get(index);
 
-        console.log(name);
+        if(name === "street") address.street = value;
+        else if(name === "complement") address.complement = value;
+        else if(name === "postalCode") address.postalCode = value;
+        else if(name === "district") address.district = value;
+        else if(name === "city") address.city = value;
+        else if(name === "state") address.state = value;
         
-        if(name === "street") auxPerson.addresses[index].street = value;
-        else if(name === "complement") auxPerson.addresses[index].complement = value;
-        else if(name === "postalCode") auxPerson.addresses[index].postalCode = value;
-        else if(name === "district") auxPerson.addresses[index].district = value;
-        else if(name === "city") auxPerson.addresses[index].city = value;
-        else if(name === "state") auxPerson.addresses[index].state = value;
+        map.set(index, address);
+        this.setState({
+            mapAddress: map
+        });
     };
 
     public render(){
@@ -90,17 +186,17 @@ export default class CreatePage extends Component {
                                     <div className="row">
                                         <div className="col-6">
                                             <label htmlFor="input1">Nome completo</label>
-                                            <input className="form-control" name="fullName" id="input1" defaultValue={auxPerson.fullName} onChange={(e) => this.updateInfoPerson(e)}/>	  
+                                            <input className="form-control" name="fullName" onChange={(e) => this.updateInfoPerson(e)}/>	  
                                         </div>
 
                                         <div className="col-3">
                                             <label htmlFor="input2">CPF</label>
-                                            <input className="form-control" name="cpf" id="input2" defaultValue={auxPerson.cpf} onChange={(e) => this.updateInfoPerson(e)}/>	
+                                            <input className="form-control" name="cpf" onChange={(e) => this.updateInfoPerson(e)}/>	
                                         </div>
                                         
                                         <div className="col-3">
                                             <label htmlFor="input3">Dt. Nascimento</label>
-                                            <input type="date" className="form-control" name="birthDate" id="input3" onChange={(e) => this.updateInfoPerson(e)}/>	  
+                                            <input type="date" className="form-control" name="birthDate" onChange={(e) => this.updateInfoPerson(e)}/>	  
                                         </div>
                                     </div>
                                 </article>
@@ -108,56 +204,23 @@ export default class CreatePage extends Component {
                             <div className="box">
                                 <article className="securitytable">
                                     <div className="title">
-                                        <div className="row align-items-start">
+                                        <div className="row">
                                             <div className="col">
                                                 <h4><strong>Endereço</strong></h4>
                                             </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div className="address" id="idAddress">
-                                        <hr className="lightgray-line" />
-                                        <div className="row">
-                                            <div className="col-6">
-                                                <label htmlFor="input1">Rua</label>
-                                                <input className="form-control" name="street" id="input1" onChange={(e) => this.updateAddress(0, e)}/>	  
-                                            </div>
-
-                                            <div className="col-4">
-                                                <label htmlFor="input1">Complemento</label>
-                                                <input className="form-control" name="complement" id="input1" onChange={(e) => this.updateAddress(0, e)}/>	  
-                                            </div>
-
-                                            <div className="col-2">
-                                                <label htmlFor="input1">CEP</label>
-                                                <input className="form-control" name="postalCode" id="input1" onChange={(e) => this.updateAddress(0, e)}/>	  
-                                            </div>
-                                        </div>
-
-                                        <div className="row">
-                                            <div className="col">
-                                                <label htmlFor="input1">Bairro</label>
-                                                <input className="form-control" name="district" id="input1" onChange={(e) => this.updateAddress(0, e)}/>	  
-                                            </div>
-
-                                            <div className="col">
-                                                <label htmlFor="input2">Cidade</label>
-                                                <input className="form-control" name="city" id="input2" onChange={(e) => this.updateAddress(0, e)}/>	
-                                            </div>
-                                            
-                                            <div className="col">
-                                                <label htmlFor="input3">Estado</label>
-                                                <input className="form-control"  name="state" id="input3" onChange={(e) => this.updateAddress(0, e)}/>	  
+                                            <div className="col align-left">
+                                                <button className="btn btn-outline-success" onClick={this.handleAdd}>Add</button>
                                             </div>
                                         </div>
                                     </div>
+                                
+                                    {this.renderAddresses()}
                                 </article>
                             </div>
                             
 
                             <div className="text-center">
-                                <Link to={"/"}><button className="btn btn-outline-success ms-1">Voltar</button></Link>
-                                <button className="btn btn-outline-warning" onClick={this.savePerson}>Salvar</button>
+                                <button className="btn btn-outline-success" onClick={this.savePerson}>Salvar</button>
                             </div>
                         </div>
                     </div>
@@ -166,3 +229,5 @@ export default class CreatePage extends Component {
         );
     }
 }
+
+export default CreatePage;
