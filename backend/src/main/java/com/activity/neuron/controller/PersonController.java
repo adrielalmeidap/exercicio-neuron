@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.activity.neuron.dto.PersonDTO;
 import com.activity.neuron.exception.CpfAlreadyRegisteredException;
 import com.activity.neuron.exception.ResourceNotFoundException;
 import com.activity.neuron.model.Person;
@@ -34,7 +35,7 @@ public class PersonController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Person>> getAllPersons() {
+    public ResponseEntity<List<PersonDTO>> getAllPersons() {
         return ResponseEntity.ok(personService.getPersons());
     }
 
