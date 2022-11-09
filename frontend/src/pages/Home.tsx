@@ -35,7 +35,8 @@ export default class HomePage extends Component<IHomePageProps, IState> {
     deletePerson (id: number) {
         if (window.confirm("Deseja realmente realizar a deleção deste registro?")) {
             PersonDataService.delete(id);
-            window.location.href =  '/';
+            let elementPerson: any = window.document.getElementById('person' + id);
+            elementPerson.parentNode.removeChild(elementPerson);
         }
     }
 
@@ -60,12 +61,12 @@ export default class HomePage extends Component<IHomePageProps, IState> {
                             <th scope="col">Nome completo</th>
                             <th scope="col">CPF</th>
                             <th scope="col">Data de nascimento</th>
-                            <th scope="col">Actions</th>
+                            <th scope="col">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
                         {people && people.map(people =>
-                            <tr key={people.id}>
+                            <tr id={'person' + people.id} key={people.id}>
                                 <td>{people.fullName}</td>
                                 <td>{people.cpf}</td>
                                 <td>{this.formatDate(people.birthDate)}</td>

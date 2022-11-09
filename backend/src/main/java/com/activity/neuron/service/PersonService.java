@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.activity.neuron.exception.CpfAlreadyRegisteredException;
 import com.activity.neuron.model.Person;
 import com.activity.neuron.repository.PersonRepository;
 
@@ -29,7 +30,7 @@ public class PersonService {
 
     public Person createPerson(Person person) {
         if(this.checkIfCpfIsAlreadyRegistered(person.getCpf(), 0L)) {
-            return null;
+            throw new CpfAlreadyRegisteredException("CPF already is registered");
         }
 
         return personRepository.save(person);
@@ -45,7 +46,7 @@ public class PersonService {
 
     public Person updatePerson(Person person, long idPerson) {
         if(this.checkIfCpfIsAlreadyRegistered(person.getCpf(), person.getId())) {
-            return null;
+            throw new CpfAlreadyRegisteredException("CPF already is registered");
         }
 
         Person personSaved = this.personRepository.findById(idPerson)

@@ -10,33 +10,42 @@ let auxPerson: IPersonData = {
     cpf: "",
     birthDate: new Date(),
     addresses: []
-}
+};
 
 export default class EditPage extends Component{
     constructor(props: RouterProps){
         super(props);
-        this.state = { 
-            person: {
-                id: "",
-                fullName: "",
-                cpf: "",
-                birthDate: new Date(),
-                addresses: []
-            }
+        auxPerson = {
+            id: "",
+            fullName: "",
+            cpf: "",
+            birthDate: new Date(),
+            addresses: []
         };
+        this.setState(auxPerson);
         this.getPerson = this.getPerson.bind(this);
     }
 
     componentDidMount(): void {
+        auxPerson = {
+            id: "",
+            fullName: "",
+            cpf: "",
+            birthDate: new Date(),
+            addresses: []
+        }
+
         const url = window.location.href;
         const idParam = url.split("?")[1];
 
-        this.getPerson(idParam)
+        this.getPerson(idParam);
     }
 
-    getPerson(idParam: string): void{
-        PersonDataService.get(idParam).then((response: any) => {
+    async getPerson(idParam: string): Promise<void>{
+        debugger;
+        await PersonDataService.get(idParam).then((response: any) => {
             auxPerson = response.data;
+            this.setState(auxPerson);
         }).catch((e: Error) => {
             console.log(e);
             window.location.href = "/";
